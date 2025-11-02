@@ -110,10 +110,10 @@ export default {
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px hsl(214 95% 53% / 0.3)",
+            boxShadow: "0 0 20px hsl(25 47% 45% / 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 40px hsl(214 95% 53% / 0.6)",
+            boxShadow: "0 0 40px hsl(25 47% 45% / 0.6)",
           },
         },
       },
