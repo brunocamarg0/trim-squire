@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -33,6 +35,7 @@ import {
 
 const Reports = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [startDate, setStartDate] = useState<Date>(startOfMonth(new Date()));
   const [endDate, setEndDate] = useState<Date>(endOfMonth(new Date()));
   const [reportType, setReportType] = useState<"daily" | "weekly" | "monthly">("monthly");
@@ -96,6 +99,59 @@ const Reports = () => {
     }));
   };
 
+  const handleExport = () => {
+    if (!reportData) {
+      toast({
+        title: "Erro",
+        description: "Não há dados para exportar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Criar CSV
+    const csvRows: string[] = [];
+    
+    // Estatísticas
+    csvRows.push("ESTATÍSTICAS FINANCEIRAS");
+    csvRows.push(`Receita Total,${reportData.stats.totalRevenue.toFixed(2)}`);
+    csvRows.push(`Despesas Totais,${reportData.stats.totalExpenses.toFixed(2)}`);
+    csvRows.push(`Lucro,${reportData.stats.profit.toFixed(2)}`);
+    csvRows.push(`Quantidade de Transações,${reportData.stats.transactionCount}`);
+    csvRows.push("");
+    
+    // Transações
+    csvRows.push("TRANSAÇÕES");
+    csvRows.push("Tipo,Categoria,Descrição,Valor,Data");
+    reportData.transactions.forEach((t: any) => {
+      csvRows.push(`${t.type},${t.category},"${t.description}",${t.amount.toFixed(2)},${format(new Date(t.date), "dd/MM/yyyy")}`);
+    });
+    csvRows.push("");
+    
+    // Agendamentos
+    csvRows.push("AGENDAMENTOS");
+    csvRows.push("Cliente,Barbeiro,Data,Hora,Status,Valor");
+    reportData.appointments.forEach((apt: any) => {
+      csvRows.push(`${apt.clientId},${apt.barberId},${format(new Date(apt.date), "dd/MM/yyyy")},${apt.startTime},${apt.status},${apt.totalPrice.toFixed(2)}`);
+    });
+
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `relatorio_${format(new Date(), "dd_MM_yyyy")}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Exportação realizada",
+      description: "Relatório exportado com sucesso!",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -114,7 +170,7 @@ const Reports = () => {
           <h1 className="text-3xl font-bold uppercase">Relatórios</h1>
           <p className="text-muted-foreground mt-2">Análises e estatísticas do seu negócio</p>
         </div>
-        <Button className="border-2 border-foreground">
+        <Button className="border-2 border-foreground" onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" />
           Exportar
         </Button>
