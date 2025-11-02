@@ -56,7 +56,21 @@ export const authService = {
       return { success: true, userId: user.uid };
     } catch (error: any) {
       console.error('Erro ao registrar:', error);
-      return { success: false, error: error.message };
+      
+      // Mensagens de erro mais amigáveis
+      let errorMessage = error.message;
+      
+      if (error.code === 'auth/api-key-not-valid') {
+        errorMessage = 'Firebase não configurado. Configure o arquivo .env.local com suas credenciais. Veja CONFIGURAR_FIREBASE.md';
+      } else if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Este email já está cadastrado. Faça login ou use outro email.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'A senha é muito fraca. Use pelo menos 6 caracteres.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email inválido. Verifique o email digitado.';
+      }
+      
+      return { success: false, error: errorMessage };
     }
   },
 
@@ -78,7 +92,21 @@ export const authService = {
       return { success: true, userId: user.uid };
     } catch (error: any) {
       console.error('Erro ao fazer login:', error);
-      return { success: false, error: error.message };
+      
+      // Mensagens de erro mais amigáveis
+      let errorMessage = error.message;
+      
+      if (error.code === 'auth/api-key-not-valid') {
+        errorMessage = 'Firebase não configurado. Configure o arquivo .env.local com suas credenciais. Veja CONFIGURAR_FIREBASE.md';
+      } else if (error.code === 'auth/user-not-found') {
+        errorMessage = 'Email não cadastrado. Verifique o email ou crie uma conta.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Senha incorreta. Tente novamente.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email inválido. Verifique o email digitado.';
+      }
+      
+      return { success: false, error: errorMessage };
     }
   },
 

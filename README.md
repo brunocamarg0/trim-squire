@@ -1,10 +1,72 @@
-# Welcome to your Lovable project
+# 🎉 Barber - Sistema de Gestão para Barbearias
 
-## Project info
+Sistema completo de gestão e agendamento para barbearias, com controle financeiro, gestão de equipe e muito mais.
 
-**URL**: https://lovable.dev/projects/aad27fcd-4e9a-4943-8548-664ae7045d90
+## ⚡ Início Rápido
 
-## How can I edit this code?
+### 1. Clone e instale dependências
+
+```sh
+git clone https://github.com/brunocamarg0/trim-squire.git
+cd trim-squire
+npm install
+```
+
+### 2. 🔥 Configure o Firebase (OBRIGATÓRIO)
+
+**⚠️ IMPORTANTE**: Antes de usar o sistema, você precisa configurar o Firebase.
+
+1. **Crie um arquivo `.env.local` na raiz do projeto**
+2. **Siga o guia completo**: Veja [`CONFIGURAR_FIREBASE.md`](./CONFIGURAR_FIREBASE.md) para instruções detalhadas passo a passo.
+
+**Resumo rápido:**
+- Crie um projeto no [Firebase Console](https://console.firebase.google.com)
+- Ative Authentication (Email/Password)
+- Crie um banco Firestore (modo de teste)
+- Copie as credenciais para `.env.local`
+
+### 3. Execute o projeto
+
+```sh
+npm run dev
+```
+
+O app estará disponível em `http://localhost:8080`
+
+---
+
+## 🚀 Funcionalidades
+
+- ✅ **Autenticação completa** - Login e registro de proprietários
+- 📅 **Sistema de agendamentos** - Gestão completa de agendamentos
+- 👥 **Gestão de clientes** - Cadastro e histórico de clientes
+- 💇 **Gestão de barbeiros** - Controle de equipe e comissões
+- 💰 **Controle financeiro** - Receitas, despesas e relatórios
+- 📊 **Dashboard em tempo real** - Métricas e estatísticas atualizadas
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/     # Componentes reutilizáveis
+├── contexts/      # Contexts React (AuthContext)
+├── lib/           # Configurações (Firebase)
+├── pages/         # Páginas da aplicação
+├── services/      # Serviços Firebase
+└── types/         # Tipos TypeScript
+```
+
+## 🔧 Tecnologias
+
+- **React** + **TypeScript**
+- **Firebase** (Auth, Firestore, Storage)
+- **Tailwind CSS** + **shadcn/ui**
+- **React Router** para navegação
+- **date-fns** para manipulação de datas
+
+---
+
+## 📖 Como editar este código
 
 There are several ways of editing your application.
 
