@@ -4,8 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { FirebaseSetupWarning } from "@/components/FirebaseSetupWarning";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -42,18 +40,8 @@ const AppContent = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <>
-            <FirebaseSetupWarning />
-            <Index />
-          </>
-        } />
-        <Route path="/auth" element={
-          <>
-            <FirebaseSetupWarning />
-            <Auth />
-          </>
-        } />
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/demo" element={<Demo />} />
         <Route 
           path="/dashboard" 
@@ -87,17 +75,15 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AppContent />
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AppContent />
+      </TooltipProvider>
+    </AuthProvider>
+  </QueryClientProvider>
 );
 
 export default App;

@@ -1,12 +1,9 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 // Configuração do Firebase
-// IMPORTANTE: Configure as credenciais no arquivo .env.local
-// Veja CONFIGURAR_FIREBASE.md para instruções detalhadas
-
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
 const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
@@ -22,31 +19,13 @@ const isConfigured = apiKey &&
   !apiKey.includes('your-') &&
   apiKey.startsWith('AIza');
 
-// Debug: Log das variáveis (apenas em desenvolvimento)
-if (import.meta.env.DEV) {
-  console.log('🔍 Firebase Config Debug:', {
-    hasApiKey: !!apiKey,
-    apiKeyLength: apiKey?.length || 0,
-    apiKeyStart: apiKey?.substring(0, 10) || 'undefined',
-    isConfigured,
-    authDomain: !!authDomain,
-    projectId: !!projectId
-  });
-}
-
 if (!isConfigured) {
-  console.warn('⚠️ AVISO: Firebase não está configurado corretamente!');
-  if (!apiKey) {
-    console.warn('📝 Não foi possível encontrar VITE_FIREBASE_API_KEY no .env.local');
-    console.warn('💡 Certifique-se de que:');
-    console.warn('   1. O arquivo .env.local existe na raiz do projeto');
-    console.warn('   2. O servidor foi reiniciado após criar o arquivo');
-    console.warn('   3. As variáveis começam com VITE_');
-  }
-  console.warn('📖 Veja o arquivo CONFIGURAR_FIREBASE.md para instruções detalhadas.');
+  console.error('❌ ERRO: Firebase não está configurado!');
+  console.error('📝 Certifique-se de que o arquivo .env.local existe na raiz do projeto com suas credenciais.');
+  console.error('📖 Veja o arquivo ENV_EXAMPLE.txt para o formato correto.');
 }
 
-// Firebase config - usar valores padrão se não configurado
+// Firebase config
 const firebaseConfig = {
   apiKey: apiKey || 'not-configured',
   authDomain: authDomain || 'not-configured',
@@ -56,36 +35,40 @@ const firebaseConfig = {
   appId: appId || 'not-configured'
 };
 
-// Initialize Firebase apenas se estiver configurado
-let app;
+// Initialize Firebase (usar app existente se já estiver inicializado)
+let app: FirebaseApp;
 try {
-  app = initializeApp(firebaseConfig);
+  const existingApps = getApps();
+  if (existingApps.length > 0) {
+    app = existingApps[0];
+  } else {
+    app = initializeApp(firebaseConfig);
+  }
+  
   if (!isConfigured) {
-    console.warn('⚠️ Firebase inicializado com credenciais padrão. Configure o .env.local para usar o Firebase.');
+    console.warn('⚠️ Firebase inicializado com credenciais padrão. Configure o .env.local corretamente.');
   }
 } catch (error) {
   console.error('❌ Erro ao inicializar Firebase:', error);
-  // Criar um objeto mock para não quebrar a aplicação
-  app = null as any;
+  throw new Error('Falha ao inicializar Firebase. Verifique suas credenciais no arquivo .env.local');
 }
 
-// Initialize Firebase services apenas se app estiver inicializado
-let authInstance: any = null;
-let dbInstance: any = null;
-let storageInstance: any = null;
+// Initialize Firebase services
+let authInstance: Auth;
+let dbInstance: Firestore;
+let storageInstance: FirebaseStorage;
 
 try {
-  if (app && isConfigured) {
-    try {
-      authInstance = getAuth(app);
-      dbInstance = getFirestore(app);
-      storageInstance = getStorage(app);
-    } catch (serviceError) {
-      console.error('❌ Erro ao inicializar serviços Firebase:', serviceError);
-    }
+  authInstance = getAuth(app);
+  dbInstance = getFirestore(app);
+  storageInstance = getStorage(app);
+  
+  if (!isConfigured) {
+    console.warn('⚠️ Serviços Firebase inicializados, mas as credenciais podem estar incorretas.');
   }
 } catch (error) {
   console.error('❌ Erro ao inicializar serviços Firebase:', error);
+  throw new Error('Falha ao inicializar serviços Firebase. Verifique a configuração.');
 }
 
 export const auth = authInstance;

@@ -22,37 +22,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar se auth está disponível
     if (!auth) {
-      console.warn('⚠️ Firebase Auth não está disponível. Verifique a configuração do Firebase.');
+      console.error('Firebase Auth não está disponível');
       setLoading(false);
       return;
     }
 
-    try {
-      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        setFirebaseUser(firebaseUser);
-        
-        if (firebaseUser) {
-          try {
-            const userData = await authService.getCurrentUser(firebaseUser.uid);
-            setUser(userData);
-          } catch (error) {
-            console.error('Erro ao buscar dados do usuário:', error);
-            setUser(null);
-          }
-        } else {
-          setUser(null);
-        }
-        
-        setLoading(false);
-      });
-
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Erro ao configurar Auth State Listener:', error);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setFirebaseUser(firebaseUser);
+      
+      if (firebaseUser) {
+        const userData = await authService.getCurrentUser(firebaseUser.uid);
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
+      
       setLoading(false);
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
