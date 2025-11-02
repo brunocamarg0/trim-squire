@@ -47,24 +47,22 @@ try {
 }
 
 // Initialize Firebase services apenas se app estiver inicializado
-let authInstance, dbInstance, storageInstance;
+let authInstance: any = null;
+let dbInstance: any = null;
+let storageInstance: any = null;
 
 try {
-  if (app) {
-    authInstance = getAuth(app);
-    dbInstance = getFirestore(app);
-    storageInstance = getStorage(app);
-  } else {
-    // Criar instâncias mock para não quebrar a aplicação
-    authInstance = null as any;
-    dbInstance = null as any;
-    storageInstance = null as any;
+  if (app && isConfigured) {
+    try {
+      authInstance = getAuth(app);
+      dbInstance = getFirestore(app);
+      storageInstance = getStorage(app);
+    } catch (serviceError) {
+      console.error('❌ Erro ao inicializar serviços Firebase:', serviceError);
+    }
   }
 } catch (error) {
   console.error('❌ Erro ao inicializar serviços Firebase:', error);
-  authInstance = null as any;
-  dbInstance = null as any;
-  storageInstance = null as any;
 }
 
 export const auth = authInstance;

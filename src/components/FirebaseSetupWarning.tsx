@@ -1,10 +1,13 @@
 import { Card } from "@/components/ui/card";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const FirebaseSetupWarning = () => {
-  const isFirebaseConfigured = import.meta.env.VITE_FIREBASE_API_KEY && 
-    !import.meta.env.VITE_FIREBASE_API_KEY.includes('your-');
+  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+  const isFirebaseConfigured = apiKey && 
+    apiKey !== 'your-api-key-here' && 
+    !apiKey.includes('your-') &&
+    apiKey.length > 10;
 
   if (!isFirebaseConfigured) {
     return (
