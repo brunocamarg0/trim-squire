@@ -53,23 +53,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dark">
-      <div className="container mx-auto p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Bem-vindo de volta, {user?.name}!</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="icon">
-              <Settings className="h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold uppercase">Dashboard</h1>
+        <p className="text-muted-foreground mt-2">Bem-vindo de volta, {user?.name}!</p>
+      </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -166,19 +155,35 @@ const Dashboard = () => {
             <div className="p-6">
               <h2 className="text-xl font-bold mb-4 uppercase">Ações Rápidas</h2>
               <div className="space-y-3">
-                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                <Button 
+                  className="w-full justify-start border-2 border-border" 
+                  variant="outline"
+                  onClick={() => navigate("/appointments?action=new")}
+                >
                   <Plus className="mr-2 h-4 w-4" />
                   Novo Agendamento
                 </Button>
-                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                <Button 
+                  className="w-full justify-start border-2 border-border" 
+                  variant="outline"
+                  onClick={() => navigate("/clients?action=new")}
+                >
                   <Users className="mr-2 h-4 w-4" />
                   Adicionar Cliente
                 </Button>
-                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                <Button 
+                  className="w-full justify-start border-2 border-border" 
+                  variant="outline"
+                  onClick={() => navigate("/financial?action=new")}
+                >
                   <DollarSign className="mr-2 h-4 w-4" />
                   Registrar Venda
                 </Button>
-                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                <Button 
+                  className="w-full justify-start border-2 border-border" 
+                  variant="outline"
+                  onClick={() => navigate("/reports")}
+                >
                   <TrendingUp className="mr-2 h-4 w-4" />
                   Ver Relatórios
                 </Button>
@@ -186,7 +191,6 @@ const Dashboard = () => {
             </div>
           </Card>
         </div>
-      </div>
     </div>
   );
 };
