@@ -25,14 +25,14 @@ if (!isConfigured) {
   console.error('📖 Veja o arquivo ENV_EXAMPLE.txt para o formato correto.');
 }
 
-// Firebase config
+// Firebase config - usar valores exatos do Firebase Console
 const firebaseConfig = {
-  apiKey: apiKey || 'not-configured',
-  authDomain: authDomain || 'not-configured',
-  projectId: projectId || 'not-configured',
-  storageBucket: storageBucket || 'not-configured',
-  messagingSenderId: messagingSenderId || 'not-configured',
-  appId: appId || 'not-configured'
+  apiKey: apiKey || 'AIzaSyCcu5Mo4yee-2KkhCbsYY6CPqJnxM6zl9A',
+  authDomain: authDomain || 'barbearia-5cb67.firebaseapp.com',
+  projectId: projectId || 'barbearia-5cb67',
+  storageBucket: storageBucket || 'barbearia-5cb67.firebasestorage.app',
+  messagingSenderId: messagingSenderId || '55554148067',
+  appId: appId || '1:55554148067:web:5a568c9e28f819356927d6'
 };
 
 // Initialize Firebase (usar app existente se já estiver inicializado)
