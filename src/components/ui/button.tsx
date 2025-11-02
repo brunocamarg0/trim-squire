@@ -9,14 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-border bg-transparent hover:bg-secondary hover:text-secondary-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-secondary hover:text-secondary-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-harsh hover:shadow-none transition-all",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-harsh hover:shadow-none transition-all",
+        outline:
+          "border-2 border-primary bg-background hover:bg-primary hover:text-primary-foreground shadow-harsh hover:shadow-none transition-all",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-harsh hover:shadow-none transition-all",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-primary text-primary-foreground hover:shadow-premium transition-all duration-300 font-semibold",
-        premium: "bg-card border-2 border-primary text-foreground hover:bg-primary hover:text-primary-foreground shadow-card transition-all duration-300",
+        hero: "bg-foreground text-background border-2 border-foreground hover:bg-background hover:text-foreground shadow-harsh hover:translate-x-1 hover:translate-y-1 transition-all font-bold uppercase",
+        brutalist: "bg-background text-foreground border-4 border-foreground hover:bg-foreground hover:text-background shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 transition-all font-bold uppercase",
       },
       size: {
         default: "h-10 px-4 py-2",

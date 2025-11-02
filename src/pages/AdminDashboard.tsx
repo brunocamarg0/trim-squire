@@ -123,15 +123,15 @@ const AdminDashboard = () => {
           <Card className="p-6 bg-card">
             <h2 className="text-xl font-semibold mb-4">Ações Administrativas</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="premium" className="w-full">
+              <Button variant="outline" className="w-full">
                 <Building2 className="mr-2 h-4 w-4" />
                 Gerenciar Barbearias
               </Button>
-              <Button variant="premium" className="w-full">
+              <Button variant="outline" className="w-full">
                 <Users className="mr-2 h-4 w-4" />
                 Gerenciar Usuários
               </Button>
-              <Button variant="premium" className="w-full">
+              <Button variant="outline" className="w-full">
                 <DollarSign className="mr-2 h-4 w-4" />
                 Relatórios Financeiros
               </Button>

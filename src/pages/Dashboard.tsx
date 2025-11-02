@@ -101,19 +101,19 @@ const Dashboard = () => {
           <Card className="p-6 bg-card">
             <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
             <div className="space-y-3">
-              <Button className="w-full justify-start" variant="premium">
+              <Button className="w-full justify-start" variant="outline">
                 <Calendar className="mr-2 h-4 w-4" />
                 Novo Agendamento
               </Button>
-              <Button className="w-full justify-start" variant="premium">
+              <Button className="w-full justify-start" variant="outline">
                 <Users className="mr-2 h-4 w-4" />
                 Adicionar Cliente
               </Button>
-              <Button className="w-full justify-start" variant="premium">
+              <Button className="w-full justify-start" variant="outline">
                 <DollarSign className="mr-2 h-4 w-4" />
                 Registrar Venda
               </Button>
-              <Button className="w-full justify-start" variant="premium">
+              <Button className="w-full justify-start" variant="outline">
                 <TrendingUp className="mr-2 h-4 w-4" />
                 Ver Relatórios
               </Button>

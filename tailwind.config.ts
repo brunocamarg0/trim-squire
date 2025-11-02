@@ -64,8 +64,8 @@ export default {
         'gradient-hero': 'var(--gradient-hero)',
       },
       boxShadow: {
-        'glow': 'var(--shadow-glow)',
-        'premium': 'var(--shadow-premium)',
+        'harsh': 'var(--shadow-harsh)',
+        'soft': 'var(--shadow-soft)',
         'card': 'var(--shadow-card)',
       },
       borderRadius: {
