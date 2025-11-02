@@ -4,9 +4,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { Layout } from "@/components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Appointments from "./pages/Appointments";
+import Clients from "./pages/Clients";
+import Barbers from "./pages/Barbers";
+import Services from "./pages/Services";
+import Financial from "./pages/Financial";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
 import BarberDashboard from "./pages/BarberDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Demo from "./pages/Demo";
@@ -47,7 +55,79 @@ const AppContent = () => {
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/appointments" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Appointments />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/clients" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Clients />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/barbers" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Barbers />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/services" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Services />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/financial" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Financial />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/reports" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Reports />
+              </Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Settings />
+              </Layout>
             </ProtectedRoute>
           } 
         />
