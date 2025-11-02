@@ -15,29 +15,61 @@ const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
 const appId = import.meta.env.VITE_FIREBASE_APP_ID;
 
 // Verificar se as credenciais estão configuradas
-if (!apiKey || apiKey === 'your-api-key-here' || apiKey.includes('your-')) {
-  console.error('❌ ERRO: Firebase não está configurado!');
-  console.error('📝 Por favor, crie um arquivo .env.local na raiz do projeto com suas credenciais do Firebase.');
-  console.error('📖 Veja o arquivo CONFIGURAR_FIREBASE.md para instruções detalhadas.');
-  throw new Error('Firebase não configurado. Crie o arquivo .env.local com suas credenciais. Veja CONFIGURAR_FIREBASE.md');
+const isConfigured = apiKey && apiKey !== 'your-api-key-here' && !apiKey.includes('your-');
+
+if (!isConfigured) {
+  console.warn('⚠️ AVISO: Firebase não está configurado!');
+  console.warn('📝 Por favor, crie um arquivo .env.local na raiz do projeto com suas credenciais do Firebase.');
+  console.warn('📖 Veja o arquivo CONFIGURAR_FIREBASE.md para instruções detalhadas.');
 }
 
+// Firebase config - usar valores padrão se não configurado
 const firebaseConfig = {
-  apiKey,
-  authDomain,
-  projectId,
-  storageBucket,
-  messagingSenderId,
-  appId
+  apiKey: apiKey || 'not-configured',
+  authDomain: authDomain || 'not-configured',
+  projectId: projectId || 'not-configured',
+  storageBucket: storageBucket || 'not-configured',
+  messagingSenderId: messagingSenderId || 'not-configured',
+  appId: appId || 'not-configured'
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase apenas se estiver configurado
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+  if (!isConfigured) {
+    console.warn('⚠️ Firebase inicializado com credenciais padrão. Configure o .env.local para usar o Firebase.');
+  }
+} catch (error) {
+  console.error('❌ Erro ao inicializar Firebase:', error);
+  // Criar um objeto mock para não quebrar a aplicação
+  app = null as any;
+}
 
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+// Initialize Firebase services apenas se app estiver inicializado
+let authInstance, dbInstance, storageInstance;
+
+try {
+  if (app) {
+    authInstance = getAuth(app);
+    dbInstance = getFirestore(app);
+    storageInstance = getStorage(app);
+  } else {
+    // Criar instâncias mock para não quebrar a aplicação
+    authInstance = null as any;
+    dbInstance = null as any;
+    storageInstance = null as any;
+  }
+} catch (error) {
+  console.error('❌ Erro ao inicializar serviços Firebase:', error);
+  authInstance = null as any;
+  dbInstance = null as any;
+  storageInstance = null as any;
+}
+
+export const auth = authInstance;
+export const db = dbInstance;
+export const storage = storageInstance;
 
 export default app;
 
