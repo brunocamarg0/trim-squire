@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,12 +39,11 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [reportData, setReportData] = useState<any>(null);
 
-  useEffect(() => {
-    loadReportData();
-  }, [user, startDate, endDate, reportType]);
-
-  const loadReportData = async () => {
-    if (!user?.barbershopId) return;
+  const loadReportData = useCallback(async () => {
+    if (!user?.barbershopId) {
+      setLoading(false);
+      return;
+    }
     
     try {
       setLoading(true);
@@ -68,7 +67,11 @@ const Reports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, startDate, endDate]);
+
+  useEffect(() => {
+    loadReportData();
+  }, [loadReportData]);
 
   const processChartData = (transactions: any[], appointments: any[]) => {
     const revenueByDate: { [key: string]: number } = {};
