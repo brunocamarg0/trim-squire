@@ -4,11 +4,21 @@ import { Link } from "react-router-dom";
 
 export const FirebaseSetupWarning = () => {
   const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+  
+  // Mesma lógica de verificação do firebase.ts
   const isFirebaseConfigured = apiKey && 
+    typeof apiKey === 'string' &&
+    apiKey.length > 20 &&
     apiKey !== 'your-api-key-here' && 
     !apiKey.includes('your-') &&
-    apiKey.length > 10;
+    apiKey.startsWith('AIza');
 
+  // Não mostrar warning se estiver configurado corretamente
+  if (isFirebaseConfigured) {
+    return null;
+  }
+
+  // Mostrar warning apenas se realmente não estiver configurado
   if (!isFirebaseConfigured) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-background">

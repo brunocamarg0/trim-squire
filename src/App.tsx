@@ -41,10 +41,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AppContent = () => {
   return (
     <BrowserRouter>
-      <FirebaseSetupWarning />
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/" element={
+          <>
+            <FirebaseSetupWarning />
+            <Index />
+          </>
+        } />
+        <Route path="/auth" element={
+          <>
+            <FirebaseSetupWarning />
+            <Auth />
+          </>
+        } />
         <Route path="/demo" element={<Demo />} />
         <Route 
           path="/dashboard" 
