@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,7 +20,14 @@ const Auth = () => {
   const [signupPassword, setSignupPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
+
+  // Redirecionar automaticamente se já estiver logado
+  useEffect(() => {
+    if (user && !isLoading) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate, isLoading]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,16 +40,23 @@ const Auth = () => {
         title: "Login realizado!",
         description: "Redirecionando para o dashboard...",
       });
-      navigate("/dashboard");
+      
+      // Usar window.location como fallback caso navigate não funcione
+      setTimeout(() => {
+        if (window.location.pathname === "/auth") {
+          window.location.href = "/dashboard";
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
+      }, 1000);
     } else {
       toast({
         title: "Erro no login",
         description: result.error || "Email ou senha incorretos",
         variant: "destructive",
       });
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -56,16 +70,23 @@ const Auth = () => {
         title: "Conta criada!",
         description: "Redirecionando para o dashboard...",
       });
-      navigate("/dashboard");
+      
+      // Usar window.location como fallback caso navigate não funcione
+      setTimeout(() => {
+        if (window.location.pathname === "/auth") {
+          window.location.href = "/dashboard";
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
+      }, 1000);
     } else {
       toast({
         title: "Erro ao criar conta",
         description: result.error || "Não foi possível criar a conta",
         variant: "destructive",
       });
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
