@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, DollarSign, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BarberLogo } from "@/components/BarberLogo";
 
 const Demo = () => {
   return (
@@ -17,6 +18,9 @@ const Demo = () => {
         </div>
 
         <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <BarberLogo size="md" showText={false} />
+          </div>
           <h1 className="text-4xl font-bold mb-4">
             Demonstração do <span className="text-primary">Barber</span>
           </h1>

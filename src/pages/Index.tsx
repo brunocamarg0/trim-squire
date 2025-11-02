@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Calendar, Users, TrendingUp, Scissors, Clock, DollarSign, Shield, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-barbershop.jpg";
+import { BarberLogo } from "@/components/BarberLogo";
 
 const Index = () => {
   return (
@@ -17,12 +18,10 @@ const Index = () => {
         
         <div className="container relative z-10 mx-auto px-4 py-20 text-center">
           <div className="animate-fade-in">
-            <h1 className="mb-6 text-5xl md:text-7xl font-bold">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Barber
-              </span>
-            </h1>
-            <p className="mb-8 text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <div className="flex justify-center mb-8">
+              <BarberLogo size="lg" showText={true} />
+            </div>
+            <p className="mb-8 text-xl md:text-2xl text-white max-w-3xl mx-auto font-medium">
               Sistema completo de gestão para barbearias. 
               Agendamentos, controle financeiro e muito mais em uma única plataforma.
             </p>

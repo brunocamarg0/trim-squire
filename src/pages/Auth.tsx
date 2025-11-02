@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Scissors } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BarberLogo } from "@/components/BarberLogo";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +29,10 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-bold mb-2">
-            <Scissors className="h-8 w-8 text-primary" />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Barber
-            </span>
+          <Link to="/" className="inline-block mb-2">
+            <BarberLogo size="md" showText={true} />
           </Link>
-          <p className="text-muted-foreground">Gestão profissional para sua barbearia</p>
+          <p className="text-white/90 font-medium">Gestão profissional para sua barbearia</p>
         </div>
 
         <Card className="p-6 shadow-premium">
