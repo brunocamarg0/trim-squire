@@ -31,7 +31,7 @@ const Auth = () => {
           <Link to="/" className="inline-flex items-center gap-2 text-3xl font-bold mb-2">
             <Scissors className="h-8 w-8 text-primary" />
             <span className="bg-gradient-primary bg-clip-text text-transparent">
-              BarberPro
+              Barber
             </span>
           </Link>
           <p className="text-muted-foreground">Gestão profissional para sua barbearia</p>

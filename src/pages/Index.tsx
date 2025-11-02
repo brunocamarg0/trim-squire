@@ -19,7 +19,7 @@ const Index = () => {
           <div className="animate-fade-in">
             <h1 className="mb-6 text-5xl md:text-7xl font-bold">
               <span className="bg-gradient-primary bg-clip-text text-transparent">
-                BarberPro
+                Barber
               </span>
             </h1>
             <p className="mb-8 text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
@@ -238,7 +238,7 @@ const Index = () => {
               Pronto para <span className="text-primary">revolucionar</span> sua barbearia?
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Junte-se a centenas de barbearias que já transformaram sua gestão com o BarberPro
+              Junte-se a centenas de barbearias que já transformaram sua gestão com o Barber
             </p>
             <Button asChild variant="hero" size="xl" className="animate-glow">
               <Link to="/auth">Começar Teste Grátis</Link>
@@ -250,7 +250,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 px-4">
         <div className="container mx-auto text-center text-muted-foreground">
-          <p>&copy; 2025 BarberPro. Todos os direitos reservados.</p>
+          <p>&copy; 2025 Barber. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
