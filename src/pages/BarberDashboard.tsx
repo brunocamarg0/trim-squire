@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, DollarSign, User } from "lucide-react";
@@ -19,11 +19,7 @@ const BarberDashboard = () => {
     nextClient: null as string | null,
   });
 
-  useEffect(() => {
-    loadBarberData();
-  }, [user]);
-
-  const loadBarberData = async () => {
+  const loadBarberData = useCallback(async () => {
     if (!user?.barbershopId) {
       setLoading(false);
       return;
@@ -54,7 +50,11 @@ const BarberDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadBarberData();
+  }, [loadBarberData]);
 
   const handleAppointmentAction = async (appointment: any, action: "confirm" | "complete") => {
     if (!user?.barbershopId) return;
