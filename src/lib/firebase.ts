@@ -84,12 +84,10 @@ try {
   dbInstance = getFirestore(app);
   storageInstance = getStorage(app);
   
-  if (!isConfigured) {
-    console.warn('⚠️ Serviços Firebase inicializados, mas as credenciais podem estar incorretas.');
-  }
-} catch (error) {
+  console.log('✅ Serviços Firebase (Auth, Firestore, Storage) inicializados');
+} catch (error: any) {
   console.error('❌ Erro ao inicializar serviços Firebase:', error);
-  throw new Error('Falha ao inicializar serviços Firebase. Verifique a configuração.');
+  throw new Error(`Falha ao inicializar serviços Firebase: ${error.message}`);
 }
 
 export const auth = authInstance;
