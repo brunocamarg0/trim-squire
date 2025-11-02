@@ -3,37 +3,53 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 
-// Configuração do Firebase
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
-const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
-const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
-const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
-const appId = import.meta.env.VITE_FIREBASE_APP_ID;
+// ============================================
+// CONFIGURAÇÃO DO FIREBASE
+// ============================================
+// Credenciais do projeto "Barbearia" - Firebase Console
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCcu5Mo4yee-2KkhCbsYY6CPqJnxM6zl9A",
+  authDomain: "barbearia-5cb67.firebaseapp.com",
+  projectId: "barbearia-5cb67",
+  storageBucket: "barbearia-5cb67.firebasestorage.app",
+  messagingSenderId: "55554148067",
+  appId: "1:55554148067:web:5a568c9e28f819356927d6",
+  measurementId: "G-EPKF1FE86B"
+};
 
-// Verificar se as credenciais estão configuradas
-const isConfigured = apiKey && 
-  typeof apiKey === 'string' &&
-  apiKey.length > 20 &&
-  apiKey !== 'your-api-key-here' && 
-  !apiKey.includes('your-') &&
-  apiKey.startsWith('AIza');
+// Tentar usar variáveis de ambiente primeiro, senão usar config direto
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY || FIREBASE_CONFIG.apiKey;
+const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || FIREBASE_CONFIG.authDomain;
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || FIREBASE_CONFIG.projectId;
+const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || FIREBASE_CONFIG.storageBucket;
+const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || FIREBASE_CONFIG.messagingSenderId;
+const appId = import.meta.env.VITE_FIREBASE_APP_ID || FIREBASE_CONFIG.appId;
 
-if (!isConfigured) {
-  console.error('❌ ERRO: Firebase não está configurado!');
-  console.error('📝 Certifique-se de que o arquivo .env.local existe na raiz do projeto com suas credenciais.');
-  console.error('📖 Veja o arquivo ENV_EXAMPLE.txt para o formato correto.');
+// Verificar se está usando variáveis de ambiente ou fallback
+const usingEnvVars = !!import.meta.env.VITE_FIREBASE_API_KEY;
+if (!usingEnvVars) {
+  console.warn('⚠️ Usando credenciais hardcoded. Configure o .env.local para produção.');
 }
 
-// Firebase config
+// Firebase config final
 const firebaseConfig = {
-  apiKey: apiKey || 'not-configured',
-  authDomain: authDomain || 'not-configured',
-  projectId: projectId || 'not-configured',
-  storageBucket: storageBucket || 'not-configured',
-  messagingSenderId: messagingSenderId || 'not-configured',
-  appId: appId || 'not-configured'
+  apiKey,
+  authDomain,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId
 };
+
+// Log de debug em desenvolvimento
+if (import.meta.env.DEV) {
+  console.log('🔍 Firebase Config:', {
+    apiKey: apiKey?.substring(0, 15) + '...',
+    authDomain,
+    projectId,
+    usingEnvVars
+  });
+}
 
 // Initialize Firebase (usar app existente se já estiver inicializado)
 let app: FirebaseApp;
@@ -41,16 +57,21 @@ try {
   const existingApps = getApps();
   if (existingApps.length > 0) {
     app = existingApps[0];
+    console.log('✅ Usando instância existente do Firebase');
   } else {
     app = initializeApp(firebaseConfig);
+    console.log('✅ Firebase inicializado com sucesso!');
   }
-  
-  if (!isConfigured) {
-    console.warn('⚠️ Firebase inicializado com credenciais padrão. Configure o .env.local corretamente.');
-  }
-} catch (error) {
+} catch (error: any) {
   console.error('❌ Erro ao inicializar Firebase:', error);
-  throw new Error('Falha ao inicializar Firebase. Verifique suas credenciais no arquivo .env.local');
+  // Tentar novamente sem usar app existente
+  try {
+    app = initializeApp(firebaseConfig, 'barber-app');
+    console.log('✅ Firebase inicializado com ID customizado');
+  } catch (retryError) {
+    console.error('❌ Erro crítico ao inicializar Firebase:', retryError);
+    throw new Error(`Falha ao inicializar Firebase: ${retryError}`);
+  }
 }
 
 // Initialize Firebase services
