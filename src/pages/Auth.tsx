@@ -1,28 +1,71 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Scissors } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { BarberLogo } from "@/components/BarberLogo";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupBarbershop, setSignupBarbershop] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { signIn, signUp } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement authentication
-    setTimeout(() => setIsLoading(false), 1000);
+
+    const result = await signIn(loginEmail, loginPassword);
+
+    if (result.success) {
+      toast({
+        title: "Login realizado!",
+        description: "Redirecionando para o dashboard...",
+      });
+      navigate("/dashboard");
+    } else {
+      toast({
+        title: "Erro no login",
+        description: result.error || "Email ou senha incorretos",
+        variant: "destructive",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement authentication
-    setTimeout(() => setIsLoading(false), 1000);
+
+    const result = await signUp(signupEmail, signupPassword, signupName, signupBarbershop);
+
+    if (result.success) {
+      toast({
+        title: "Conta criada!",
+        description: "Redirecionando para o dashboard...",
+      });
+      navigate("/dashboard");
+    } else {
+      toast({
+        title: "Erro ao criar conta",
+        description: result.error || "Não foi possível criar a conta",
+        variant: "destructive",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -50,6 +93,8 @@ const Auth = () => {
                     id="email"
                     type="email"
                     placeholder="seu@email.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -59,6 +104,8 @@ const Auth = () => {
                     id="password"
                     type="password"
                     placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     required
                   />
                 </div>
@@ -76,6 +123,8 @@ const Auth = () => {
                     id="name"
                     type="text"
                     placeholder="Seu nome"
+                    value={signupName}
+                    onChange={(e) => setSignupName(e.target.value)}
                     required
                   />
                 </div>
@@ -85,6 +134,8 @@ const Auth = () => {
                     id="signup-email"
                     type="email"
                     placeholder="seu@email.com"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -94,6 +145,8 @@ const Auth = () => {
                     id="barbershop"
                     type="text"
                     placeholder="Minha Barbearia"
+                    value={signupBarbershop}
+                    onChange={(e) => setSignupBarbershop(e.target.value)}
                     required
                   />
                 </div>
@@ -103,6 +156,8 @@ const Auth = () => {
                     id="signup-password"
                     type="password"
                     placeholder="••••••••"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
                     required
                   />
                 </div>

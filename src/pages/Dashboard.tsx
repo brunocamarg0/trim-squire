@@ -1,8 +1,57 @@
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, DollarSign, TrendingUp, Clock, Settings } from "lucide-react";
+import { Calendar, Users, DollarSign, TrendingUp, Clock, Settings, LogOut, Plus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { dashboardService } from "@/services/dashboardService";
+import { DashboardStats } from "@/types";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      if (user && user.barbershopId) {
+        try {
+          const dashboardStats = await dashboardService.getDashboardStats(user.barbershopId);
+          setStats(dashboardStats);
+        } catch (error) {
+          console.error('Erro ao carregar estatísticas:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, [user]);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-dark">
       <div className="container mx-auto p-6">
@@ -10,59 +59,64 @@ const Dashboard = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Bem-vindo de volta!</p>
+            <p className="text-muted-foreground">Bem-vindo de volta, {user?.name}!</p>
           </div>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-5 w-5" />
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon">
+              <Settings className="h-5 w-5" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={handleLogout}>
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 bg-card border-primary/50 shadow-card">
+          <Card className="p-6 border-2 border-border hover:border-foreground transition-all">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Calendar className="h-6 w-6 text-primary" />
+              <div className="p-3 border-2 border-foreground bg-background">
+                <Calendar className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Agendamentos Hoje</p>
-                <p className="text-2xl font-bold">24</p>
+                <p className="text-2xl font-bold">{stats?.todayAppointments || 0}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-primary/50 shadow-card">
+          <Card className="p-6 border-2 border-border hover:border-foreground transition-all">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Users className="h-6 w-6 text-primary" />
+              <div className="p-3 border-2 border-foreground bg-background">
+                <Users className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Clientes Ativos</p>
-                <p className="text-2xl font-bold">156</p>
+                <p className="text-2xl font-bold">{stats?.activeClients || 0}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-primary/50 shadow-card">
+          <Card className="p-6 border-2 border-border hover:border-foreground transition-all">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <DollarSign className="h-6 w-6 text-primary" />
+              <div className="p-3 border-2 border-foreground bg-background">
+                <DollarSign className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Receita Hoje</p>
-                <p className="text-2xl font-bold">R$ 1.280</p>
+                <p className="text-2xl font-bold">R$ {stats?.todayRevenue?.toFixed(2) || '0,00'}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-primary/50 shadow-card">
+          <Card className="p-6 border-2 border-border hover:border-foreground transition-all">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <TrendingUp className="h-6 w-6 text-primary" />
+              <div className="p-3 border-2 border-foreground bg-background">
+                <TrendingUp className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Crescimento</p>
-                <p className="text-2xl font-bold">+12%</p>
+                <p className="text-sm text-muted-foreground">Receita Mensal</p>
+                <p className="text-2xl font-bold">R$ {stats?.monthlyRevenue?.toFixed(2) || '0,00'}</p>
               </div>
             </div>
           </Card>
@@ -71,52 +125,64 @@ const Dashboard = () => {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Próximos Agendamentos */}
-          <Card className="lg:col-span-2 p-6 bg-card">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary" />
-              Próximos Agendamentos
-            </h2>
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 border border-border hover:border-primary transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Users className="h-6 w-6 text-primary" />
+          <Card className="lg:col-span-2 border-2 border-border">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2 uppercase">
+                <Clock className="h-5 w-5" />
+                Próximos Agendamentos
+              </h2>
+              <div className="space-y-4">
+                {stats?.upcomingAppointments && stats.upcomingAppointments.length > 0 ? (
+                  stats.upcomingAppointments.map((apt) => (
+                    <div key={apt.id} className="flex items-center justify-between p-4 border-2 border-border hover:border-foreground transition-all">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 border-2 border-foreground bg-background flex items-center justify-center font-bold">
+                          {format(new Date(apt.date), 'dd', { locale: ptBR })}
+                        </div>
+                        <div>
+                          <p className="font-bold">{apt.clientId}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {format(new Date(apt.date), "EEEE, dd 'de' MMMM", { locale: ptBR })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold">{apt.startTime}</p>
+                        <p className="text-sm text-muted-foreground">R$ {apt.totalPrice.toFixed(2)}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold">Cliente {i}</p>
-                      <p className="text-sm text-muted-foreground">Corte + Barba</p>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">Nenhum agendamento próximo</p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold">14:{i * 15}</p>
-                    <p className="text-sm text-muted-foreground">Barbeiro João</p>
-                  </div>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           </Card>
 
           {/* Quick Actions */}
-          <Card className="p-6 bg-card">
-            <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
-            <div className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
-                <Calendar className="mr-2 h-4 w-4" />
-                Novo Agendamento
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Users className="mr-2 h-4 w-4" />
-                Adicionar Cliente
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <DollarSign className="mr-2 h-4 w-4" />
-                Registrar Venda
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Ver Relatórios
-              </Button>
+          <Card className="border-2 border-border">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4 uppercase">Ações Rápidas</h2>
+              <div className="space-y-3">
+                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Novo Agendamento
+                </Button>
+                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                  <Users className="mr-2 h-4 w-4" />
+                  Adicionar Cliente
+                </Button>
+                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  Registrar Venda
+                </Button>
+                <Button className="w-full justify-start border-2 border-border" variant="outline">
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  Ver Relatórios
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
