@@ -1,4 +1,4 @@
-// User Types
+﻿// User Types
 export interface User {
   id: string;
   email: string;
@@ -149,3 +149,36 @@ export interface DashboardStats {
   recentTransactions: Transaction[];
 }
 
+// Chat Types
+
+// Chat Types
+export interface Message {
+  id: string;
+  chatId: string;
+  senderId: string;
+  senderRole: 'client' | 'barber' | 'owner' | 'ai';
+  senderName: string;
+  content: string;
+  type: 'text' | 'appointment_request' | 'appointment_confirmed' | 'system';
+  appointmentData?: {
+    date: Date;
+    time: string;
+    serviceIds: string[];
+    barberId?: string;
+  };
+  read: boolean;
+  createdAt: Date;
+}
+
+export interface Chat {
+  id: string;
+  barbershopId: string;
+  clientId: string;
+  clientName: string;
+  lastMessage?: string;
+  lastMessageAt?: Date;
+  unreadCount: number;
+  status: 'active' | 'archived';
+  createdAt: Date;
+  updatedAt: Date;
+}
