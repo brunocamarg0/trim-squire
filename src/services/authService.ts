@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { User } from '@/types';
 
@@ -115,6 +115,62 @@ export const authService = {
   // Observer para mudanças de autenticação
   onAuthStateChanged(callback: (user: FirebaseUser | null) => void) {
     return onAuthStateChanged(auth, callback);
+  },
+
+  // Registrar novo cliente
+  async signUpClient(email: string, password: string, name: string, barbershopId: string) {
+    try {
+      if (!auth) {
+        throw new Error('Firebase Auth não está inicializado. Verifique a configuração do Firebase.');
+      }
+      
+      // Verificar se a barbearia existe
+      const barbershopDoc = await getDoc(doc(db, 'barbershops', barbershopId));
+      if (!barbershopDoc.exists()) {
+        return { success: false, error: 'Barbearia não encontrada. Verifique o ID da barbearia.' };
+      }
+      
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Atualizar o displayName
+      await updateProfile(user, { displayName: name });
+
+      // Criar perfil do cliente no Firestore
+      const userData: Omit<User, 'id'> = {
+        email,
+        name,
+        role: 'client',
+        barbershopId,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      await setDoc(doc(db, 'users', user.uid), userData);
+
+      return { success: true, userId: user.uid };
+    } catch (error: any) {
+      console.error('Erro ao registrar cliente:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Buscar barbearia por nome (para facilitar cadastro de cliente)
+  async findBarbershopByName(name: string) {
+    try {
+      const barbershopsRef = collection(db, 'barbershops');
+      const q = query(barbershopsRef, where('name', '==', name));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        return { id: doc.id, ...doc.data() };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao buscar barbearia:', error);
+      return null;
+    }
   },
 
   // Buscar dados do usuário atual

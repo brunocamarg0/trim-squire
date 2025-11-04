@@ -19,6 +19,8 @@ import BarberDashboard from "./pages/BarberDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Demo from "./pages/Demo";
 import NotFound from "./pages/NotFound";
+import ClientDashboard from "./pages/ClientDashboard";
+import ClientChat from "./pages/ClientChat";
 
 const queryClient = new QueryClient();
 
@@ -144,6 +146,22 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/client/dashboard" 
+          element={
+            <ProtectedRoute>
+              <ClientDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/client/chat" 
+          element={
+            <ProtectedRoute>
+              <ClientChat />
             </ProtectedRoute>
           } 
         />

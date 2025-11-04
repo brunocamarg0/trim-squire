@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { BarberLogo } from "@/components/BarberLogo";
 import { useAuth } from "@/contexts/AuthContext";
+import { authService } from "@/services/authService";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,14 +19,23 @@ const Auth = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupBarbershop, setSignupBarbershop] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientBarbershopId, setClientBarbershopId] = useState("");
+  const [clientPassword, setClientPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, signUpClient, user } = useAuth();
 
   // Redirecionar automaticamente se já estiver logado
   useEffect(() => {
     if (user && !isLoading) {
-      navigate("/dashboard", { replace: true });
+      // Redirecionar baseado no role do usuário
+      if (user.role === 'client') {
+        navigate("/client/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     }
   }, [user, navigate, isLoading]);
 
@@ -38,17 +48,13 @@ const Auth = () => {
     if (result.success) {
       toast({
         title: "Login realizado!",
-        description: "Redirecionando para o dashboard...",
+        description: "Redirecionando...",
       });
       
-      // Usar window.location como fallback caso navigate não funcione
+      // Aguardar um pouco para o user ser atualizado no contexto e redirecionar
       setTimeout(() => {
-        if (window.location.pathname === "/auth") {
-          window.location.href = "/dashboard";
-        } else {
-          navigate("/dashboard", { replace: true });
-        }
-      }, 1000);
+        // O redirecionamento será feito pelo useEffect que monitora o user
+      }, 500);
     } else {
       toast({
         title: "Erro no login",
@@ -71,18 +77,38 @@ const Auth = () => {
         description: "Redirecionando para o dashboard...",
       });
       
-      // Usar window.location como fallback caso navigate não funcione
       setTimeout(() => {
-        if (window.location.pathname === "/auth") {
-          window.location.href = "/dashboard";
-        } else {
-          navigate("/dashboard", { replace: true });
-        }
+        navigate("/dashboard", { replace: true });
       }, 1000);
     } else {
       toast({
         title: "Erro ao criar conta",
         description: result.error || "Não foi possível criar a conta",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const handleClientSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const result = await signUpClient(clientEmail, clientPassword, clientName, clientBarbershopId);
+
+    if (result.success) {
+      toast({
+        title: "Conta criada!",
+        description: "Redirecionando para o dashboard...",
+      });
+      
+      setTimeout(() => {
+        navigate("/client/dashboard", { replace: true });
+      }, 1000);
+    } else {
+      toast({
+        title: "Erro ao criar conta",
+        description: result.error || "Não foi possível criar a conta de cliente",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -101,9 +127,10 @@ const Auth = () => {
 
         <Card className="p-6 shadow-premium">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="signup">Criar Conta</TabsTrigger>
+              <TabsTrigger value="signup">Sou Barbeiro</TabsTrigger>
+              <TabsTrigger value="signup-client">Sou Cliente</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -183,7 +210,62 @@ const Auth = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading} variant="hero">
-                  {isLoading ? "Criando conta..." : "Criar Conta"}
+                  {isLoading ? "Criando conta..." : "Criar Conta de Barbeiro"}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup-client">
+              <form onSubmit={handleClientSignup} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="client-name">Nome Completo</Label>
+                  <Input
+                    id="client-name"
+                    type="text"
+                    placeholder="Seu nome"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="client-email">Email</Label>
+                  <Input
+                    id="client-email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="client-barbershop">ID da Barbearia</Label>
+                  <Input
+                    id="client-barbershop"
+                    type="text"
+                    placeholder="ID da barbearia (ex: abc123...)"
+                    value={clientBarbershopId}
+                    onChange={(e) => setClientBarbershopId(e.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Peça o ID da barbearia ao proprietário ou use o ID do Firebase
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="client-password">Senha</Label>
+                  <Input
+                    id="client-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={clientPassword}
+                    onChange={(e) => setClientPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading} variant="hero">
+                  {isLoading ? "Criando conta..." : "Criar Conta de Cliente"}
                 </Button>
               </form>
             </TabsContent>

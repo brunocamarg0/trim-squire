@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (email: string, password: string, name: string, barbershopName: string) => Promise<{ success: boolean; error?: string }>;
+  signUpClient: (email: string, password: string, name: string, barbershopId: string) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -54,6 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
+  const signUpClient = async (email: string, password: string, name: string, barbershopId: string) => {
+    const result = await authService.signUpClient(email, password, name, barbershopId);
+    return result;
+  };
+
   const signOut = async () => {
     await authService.signOut();
   };
@@ -63,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, firebaseUser, loading, signIn, signUp, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, firebaseUser, loading, signIn, signUp, signUpClient, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
